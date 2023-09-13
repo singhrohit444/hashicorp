@@ -4,40 +4,23 @@ on:
   push:
     branches:
       - master  # Change this to your main branch name
-  workflow_dispatch:
-    inputs:
-      secret1:
-        description: 'My first secret'
-        required: true
-      secret2:
-        description: 'My second secret'
-        required: true
 
 jobs:
   write-secrets:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      
-    - name: Write GitHub Secrets to File
-      run: |
-        # Create a file to store the secrets
-        touch secrets.txt
-        
-        # Echo GitHub secrets into the file (replace SECRET_NAME with your actual secret names)
-        echo "MySecret1=${{ secrets.MY_SECRET_1 }}" >> secrets.txt
-        echo "MySecret2=${{ secrets.MY_SECRET_2 }}" >> secrets.txt
-        echo "MyfirstSecret=${{ secrets.secret1 }}" >> secrets.txt
-        echo "MysecSecret=${{ secrets.secret2 }}" >> secrets.txt
-        
-        # Optionally, you can view the content of the file for verification
-        cat secrets.txt
-        
-      # Save the secrets.txt file as an artifact for later use (optional)
-    - name: Archive secrets.txt
-      uses: actions/upload-artifact@v2
-      with:
-         name: secrets
-         path: secrets.txt
+      - uses: actions/checkout@v3
+      - name: Decrypt large secret
+        run: ./decrypt_secret.sh mysecret.json.gpg #pass the name of encrypted file as input parameter
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
+
+      - name: preparing output file name absed on input filename so we can see output
+        run: output_file=$(echo "mysecret.json.gpg"| awk -F. '{print $1}' )
+          # This command is just an example to show your secret being printed
+      # Ensure you remove any print statements of your secrets. GitHub does
+      # not hide secrets that use this workaround.
+      - name: Test printing your secret (Remove this step in production)
+        run: cat $HOME/secrets/$output_file.txt
+

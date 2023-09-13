@@ -1,0 +1,33 @@
+name: Write GitHub Secrets to File
+
+on:
+  push:
+    branches:
+      - master  # Change this to your main branch name
+
+jobs:
+  write-secrets:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Write GitHub Secrets to File
+      run: |
+        # Create a file to store the secrets
+        touch secrets.txt
+        
+        # Echo GitHub secrets into the file (replace SECRET_NAME with your actual secret names)
+        echo "MySecret1=${{ secrets.MY_SECRET_1 }}" >> secrets.txt
+        echo "MySecret2=${{ secrets.MY_SECRET_2 }}" >> secrets.txt
+        
+        # Optionally, you can view the content of the file for verification
+        cat secrets.txt
+        
+      # Save the secrets.txt file as an artifact for later use (optional)
+    - name: Archive secrets.txt
+      uses: actions/upload-artifact@v2
+      with:
+         name: secrets
+         path: secrets.txt

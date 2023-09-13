@@ -23,4 +23,3 @@ jobs:
       # not hide secrets that use this workaround.
       - name: Test printing your secret (Remove this step in production)
         run: cat $HOME/secrets/$output_file.txt
-

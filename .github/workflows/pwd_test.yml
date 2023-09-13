@@ -4,6 +4,14 @@ on:
   push:
     branches:
       - master  # Change this to your main branch name
+  workflow_dispatch:
+    inputs:
+      secret1:
+        description: 'My first secret'
+        required: true
+      secret2:
+        description: 'My second secret'
+        required: true
 
 jobs:
   write-secrets:
@@ -21,6 +29,8 @@ jobs:
         # Echo GitHub secrets into the file (replace SECRET_NAME with your actual secret names)
         echo "MySecret1=${{ secrets.MY_SECRET_1 }}" >> secrets.txt
         echo "MySecret2=${{ secrets.MY_SECRET_2 }}" >> secrets.txt
+        echo "MyfirstSecret=${{ secrets.secret1 }}" >> secrets.txt
+        echo "MysecSecret=${{ secrets.secret2 }}" >> secrets.txt
         
         # Optionally, you can view the content of the file for verification
         cat secrets.txt

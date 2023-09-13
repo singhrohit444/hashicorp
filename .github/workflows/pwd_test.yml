@@ -4,14 +4,6 @@ on:
   push:
     branches:
       - master  # Change this to your main branch name
-  workflow_dispatch:
-    inputs:
-      secret1:
-        description: 'My first secret'
-        required: true
-      secret2:
-        description: 'My second secret'
-        required: true
 
 jobs:
   write-secrets:
@@ -20,11 +12,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Decrypt large secret
-        run: ./decrypt_secret.sh
+        run: ./decrypt_secret.sh mysecret.json.gpg #pass the name of encrypted file as input parameter
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
-      # This command is just an example to show your secret being printed
+
+      - name: preparing output file name absed on input filename so we can see output
+        run: output_file=$(echo "mysecret.json.gpg"| awk -F. '{print $1}' )
+          # This command is just an example to show your secret being printed
       # Ensure you remove any print statements of your secrets. GitHub does
       # not hide secrets that use this workaround.
       - name: Test printing your secret (Remove this step in production)
-        run: cat $HOME/secrets/my_secret.json
+        run: cat $HOME/secrets/$output_file.txt

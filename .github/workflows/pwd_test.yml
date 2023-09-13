@@ -12,14 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Decrypt large secret
-        run: ./decrypt_secret.sh mysecret.json.gpg #pass the name of encrypted file as input parameter
+        run: ./decrypt_secret.sh
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
-
-      - name: preparing output file name absed on input filename so we can see output
-        run: output_file=$(echo "mysecret.json.gpg"| awk -F. '{print $1}' )
-          # This command is just an example to show your secret being printed
+      # This command is just an example to show your secret being printed
       # Ensure you remove any print statements of your secrets. GitHub does
       # not hide secrets that use this workaround.
       - name: Test printing your secret (Remove this step in production)
-        run: cat $HOME/secrets/$output_file.txt
+        run: cat $HOME/secrets/my_secret.json
+
